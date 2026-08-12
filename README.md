@@ -15,6 +15,14 @@ Everything runs locally in your browser. No servers, no telemetry, no data colle
 - **Self-hosted fonts & icons** (Plus Jakarta Sans, Fira Code, Material Symbols) — no external network requests.
 - **100% local**: exports are processed and stored in your browser's local storage only.
 
+## Screenshots
+
+> Drop your images into [`assets/screenshots/`](./assets/screenshots) using the exact filenames below.
+
+| Export view | History view |
+| ----------- | ------------ |
+| ![Export view](assets/screenshots/export.png) | ![History view](assets/screenshots/history.png) |
+
 ## Supported sites
 
 | Platform | Hosts |
