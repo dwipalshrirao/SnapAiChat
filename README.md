@@ -101,4 +101,12 @@ chrome-extension/
 
 ## License
 
-See repository license file. (Free to use for personal and educational purposes.)
+SnapAiChat is licensed under the **Apache License, Version 2.0** — see [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE).
+
+This means anyone may use, copy, modify, and distribute the code (including in commercial products) with attribution and without warranty ("AS IS"), and there is an explicit patent grant. If you redistribute a modified version, keep the license, carry prominent notices of your changes, and preserve the `NOTICE` file.
+
+**Bundled third-party assets** retain their own licenses, independent of the project license above:
+
+- **Plus Jakarta Sans** — SIL Open Font License 1.1 (`assets/fonts/OFL-PLUS_JAKARTA_SANS.txt`)
+- **Fira Code** — SIL Open Font License 1.1 (`assets/fonts/OFL-FIRA_CODE.txt`)
+- **Material Symbols** — Apache License 2.0 (`assets/fonts/LICENSE-APACHE2-MATERIAL_SYMBOLS.txt`)
