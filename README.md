@@ -1,8 +1,20 @@
 # SnapAiChat
 
-A Chrome/Edge browser extension that lets you export your AI conversations from **ChatGPT**, **Claude**, **Kimi**, **Gemini**, and **DeepSeek** into clean **Markdown** or **JSON** — with a local history of everything you've saved.
+A Chrome/Edge browser extension that lets you export your AI conversations from **ChatGPT**, **Claude**, **Kimi**, **Gemini**, and **DeepSeek** into clean **Markdown** or **JSON** — with a local history of everything you've saved. When a chat hits its limit, or you want to carry context into a new conversation, a different model, or even a different platform, just export, grab the text, and paste it into the next chat.
 
 Everything runs locally in your browser. No servers, no telemetry, no data collection.
+
+---
+
+## Why SnapAiChat
+
+AI chats cap out — on length, on message limits, or on what a given model handles well. When that happens you usually lose the thread. SnapAiChat lets you pick the conversation back up anywhere:
+
+- **Hit a limit?** Export the full conversation and start a fresh one with the prior context pasted in.
+- **Different model?** Move a thread from one model to another on the same platform.
+- **Different platform?** Carry context from ChatGPT/Claude/Kimi/Gemini/DeepSeek into any other supported platform.
+
+The workflow is three steps: **Export** the chat → **Copy** the Markdown (or **Download** the file) → **paste it into a new conversation**.
 
 ---
 
@@ -60,6 +72,7 @@ Firefox uses a slightly different manifest format. Load it via `about:debugging`
 3. Pick a format — **MARKDOWN** or **JSON** — using the format toggle.
 4. Click **Export conversation**. The file downloads immediately and is added to your history.
    - If the page shows *"No active chat detected"*, open/refresh a conversation first, then click **Export** again.
+   - **Tip:** paste the exported Markdown into a new chat — on the same platform, a different model, or a different platform entirely — to continue the thread or share context.
 5. Use the **History** tab (or **VIEW ALL** in the Recent section) to:
    - **Copy** the Markdown to your clipboard,
    - **Download** it again,
