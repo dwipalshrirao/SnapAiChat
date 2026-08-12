@@ -1,6 +1,6 @@
 # SnapAiChat
 
-A Chrome/Edge browser extension that lets you export your AI conversations from **ChatGPT**, **Claude**, and **Kimi** into clean **Markdown** or **JSON** — with a local history of everything you've saved.
+A Chrome/Edge browser extension that lets you export your AI conversations from **ChatGPT**, **Claude**, **Kimi**, **Gemini**, and **DeepSeek** into clean **Markdown** or **JSON** — with a local history of everything you've saved.
 
 Everything runs locally in your browser. No servers, no telemetry, no data collection.
 
@@ -30,6 +30,8 @@ Everything runs locally in your browser. No servers, no telemetry, no data colle
 | ChatGPT  | `chatgpt.com`, `openai.com` |
 | Claude   | `claude.ai` |
 | Kimi     | `kimi.com`, `moonshot.cn` |
+| Gemini   | `gemini.google.com`, `aistudio.google.com` |
+| DeepSeek | `chat.deepseek.com`, `deepseek.com` |
 
 ---
 
@@ -53,7 +55,7 @@ Firefox uses a slightly different manifest format. Load it via `about:debugging`
 
 ## Usage
 
-1. Open a conversation on a supported site (ChatGPT, Claude, or Kimi).
+1. Open a conversation on a supported site (ChatGPT, Claude, Kimi, Gemini, or DeepSeek).
 2. Click the **SnapAiChat** toolbar icon to open the popup.
 3. Pick a format — **MARKDOWN** or **JSON** — using the format toggle.
 4. Click **Export conversation**. The file downloads immediately and is added to your history.
@@ -118,3 +120,4 @@ This means anyone may use, copy, modify, and distribute the code (including in c
 - **Plus Jakarta Sans** — SIL Open Font License 1.1 (`assets/fonts/OFL-PLUS_JAKARTA_SANS.txt`)
 - **Fira Code** — SIL Open Font License 1.1 (`assets/fonts/OFL-FIRA_CODE.txt`)
 - **Material Symbols** — Apache License 2.0 (`assets/fonts/LICENSE-APACHE2-MATERIAL_SYMBOLS.txt`)
+- **Platform brand logos** (ChatGPT/OpenAI, Claude/Anthropic, Kimi/Moonshot, Gemini/Google, DeepSeek/DeepSeek) are trademarks of their respective owners and are used for identification only.

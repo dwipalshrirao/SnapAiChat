@@ -41,14 +41,17 @@ function findButtonByText(text) {
 function getRoleFromTurn(el) {
   if (el.getAttribute) {
     const direct = el.getAttribute('data-message-author-role');
-    if (direct === 'user' || direct === 'assistant') return direct;
+    if (direct === 'user') return 'user';
+    if (direct === 'assistant' || direct === 'model') return 'assistant';
     const turn = el.getAttribute('data-turn');
-    if (turn === 'user' || turn === 'assistant') return turn;
+    if (turn === 'user') return 'user';
+    if (turn === 'assistant' || turn === 'model') return 'assistant';
   }
   const child = el.querySelector('[data-message-author-role]');
   if (child) {
     const r = child.getAttribute('data-message-author-role');
-    if (r === 'user' || r === 'assistant') return r;
+    if (r === 'user') return 'user';
+    if (r === 'assistant' || r === 'model') return 'assistant';
   }
   return '';
 }
@@ -90,6 +93,70 @@ function extractTimestamp(el) {
     return dt || (time.textContent || '').trim();
   }
   return '';
+}
+
+// Collect every element matched by a list of selectors (used by the role-based
+// adapters where a platform has no single stable turn wrapper).
+function collectRoleElements(selectors) {
+  const found = [];
+  for (const sel of [].concat(selectors)) {
+    for (const el of document.querySelectorAll(sel)) found.push(el);
+  }
+  return found;
+}
+
+// Drop duplicate references and nested elements so each message is extracted
+// once from its outermost container.
+function uniqueTopLevel(els) {
+  const seen = new Set();
+  const uniq = els.filter((el) => {
+    if (seen.has(el)) return false;
+    seen.add(el);
+    return true;
+  });
+  return uniq.filter((el) => !uniq.some((o) => o !== el && o.contains(el)));
+}
+
+// Generic extractor for platforms that expose separate user/assistant elements
+// but no single turn wrapper: gather each role's elements, drop nesting
+// duplicates, order by DOM position, then pull content blocks.
+function extractByRoleSelectors(platformKey) {
+  const s = PLATFORM_SELECTORS[platformKey];
+  const userEls = uniqueTopLevel(collectRoleElements(s.user));
+  const asstEls = uniqueTopLevel(collectRoleElements(s.assistant));
+  const merged = [
+    ...userEls.map((el) => ({ el, role: 'user' })),
+    ...asstEls.map((el) => ({ el, role: 'assistant' })),
+  ];
+  merged.sort((a, b) => sortByDomPosition(a.el, b.el));
+  const out = [];
+  for (const c of merged) {
+    const blocks = extractMessageContent(c.el, s.content);
+    if (!blocks.length) continue;
+    out.push({ role: c.role, timestamp: extractTimestamp(c.el), blocks });
+  }
+  return out;
+}
+
+// Trigger lazy-loading by scrolling the page and clicking any "load earlier"
+// affordance, until the message count stops growing.
+async function loadByScrolling(platformKey, maxScrolls) {
+  const s = PLATFORM_SELECTORS[platformKey];
+  const count = () => collectRoleElements([].concat(s.user, s.assistant)).length;
+  for (let i = 0; i < (maxScrolls || 60); i++) {
+    const before = count();
+    window.scrollTo(0, document.body.scrollHeight);
+    await sleep(700);
+    window.scrollTo(0, 0);
+    await sleep(500);
+    const btn =
+      findButtonByText('Show more') ||
+      findButtonByText('Load earlier') ||
+      findButtonByText('Load more messages');
+    if (btn) btn.click();
+    await sleep(500);
+    if (count() <= before) break;
+  }
 }
 
 // ---------------------------------------------------------------- ChatGPT ---
@@ -316,12 +383,62 @@ const kimiAdapter = {
   },
 };
 
+// --------------------------------------------------------------- Gemini ---
+
+const geminiAdapter = {
+  isConversationPage() {
+    const s = PLATFORM_SELECTORS.gemini;
+    return [].concat(s.user, s.assistant).some((sel) => document.querySelector(sel));
+  },
+
+  getTitle() {
+    return (
+      document.title.replace(PLATFORM_SELECTORS.gemini.titleStrip, '').trim() ||
+      'Gemini conversation'
+    );
+  },
+
+  async loadAll() {
+    await loadByScrolling('gemini', 60);
+  },
+
+  extractMessages() {
+    return extractByRoleSelectors('gemini');
+  },
+};
+
+// ------------------------------------------------------------- DeepSeek ---
+
+const deepseekAdapter = {
+  isConversationPage() {
+    const s = PLATFORM_SELECTORS.deepseek;
+    return [].concat(s.user, s.assistant).some((sel) => document.querySelector(sel));
+  },
+
+  getTitle() {
+    return (
+      document.title.replace(PLATFORM_SELECTORS.deepseek.titleStrip, '').trim() ||
+      'DeepSeek conversation'
+    );
+  },
+
+  async loadAll() {
+    await loadByScrolling('deepseek', 60);
+  },
+
+  extractMessages() {
+    return extractByRoleSelectors('deepseek');
+  },
+};
+
 // ------------------------------------------------------------- dispatch ----
 
 const ADAPTERS = {
   chatgpt: chatgptAdapter,
   claude: claudeAdapter,
   kimi: kimiAdapter,
+  gemini: geminiAdapter,
+  deepseek: deepseekAdapter,
 };
 
 async function buildExport(platform) {

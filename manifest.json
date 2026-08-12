@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "SnapAiChat",
   "version": "1.0.0",
-  "description": "Export ChatGPT, Claude and Kimi conversations to Markdown or JSON.",
+  "description": "Export ChatGPT, Claude, Kimi, Gemini and DeepSeek conversations to Markdown or JSON.",
   "permissions": ["activeTab", "storage", "unlimitedStorage"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; font-src 'self'"
@@ -12,7 +12,14 @@
     "https://*.openai.com/*",
     "https://*.claude.ai/*",
     "https://*.kimi.com/*",
-    "https://*.moonshot.cn/*"
+    "https://*.moonshot.cn/*",
+    "https://gemini.google.com/*",
+    "https://*.gemini.google.com/*",
+    "https://aistudio.google.com/*",
+    "https://*.aistudio.google.com/*",
+    "https://chat.deepseek.com/*",
+    "https://*.deepseek.com/*",
+    "https://deepseek.com/*"
   ],
   "action": {
     "default_popup": "popup/popup.html",
@@ -35,7 +42,14 @@
         "https://*.openai.com/*",
         "https://*.claude.ai/*",
         "https://*.kimi.com/*",
-        "https://*.moonshot.cn/*"
+        "https://*.moonshot.cn/*",
+        "https://gemini.google.com/*",
+        "https://*.gemini.google.com/*",
+        "https://aistudio.google.com/*",
+        "https://*.aistudio.google.com/*",
+        "https://chat.deepseek.com/*",
+        "https://*.deepseek.com/*",
+        "https://deepseek.com/*"
       ],
       "js": [
         "content/selectors.js",

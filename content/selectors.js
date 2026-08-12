@@ -67,12 +67,68 @@ const PLATFORM_SELECTORS = {
     content: ['[class*="user-content"]', '[class*="assistant-content"]', '[class*="markdown"]'],
     titleStrip: /[\s-]*Kimi$/i,
   },
+
+  // Gemini's DOM is an SPA with obfuscated class names. The stable hooks are
+  // the `user-query` / `model-response` custom elements and the
+  // `data-message-author-role` attribute (role `user` or `model`). Assistant
+  // content lives in `.model-response-text` (or `.markdown`); the user prompt
+  // lives in `.query-text` / `.user-query-container`.
+  gemini: {
+    user: [
+      'user-query',
+      '.user-query-container',
+      '.user-query-bubble-container',
+      '[data-message-author-role="user"]',
+      'article[data-author="user"]',
+      'div[aria-label="User message"]',
+    ],
+    assistant: [
+      'model-response',
+      '.model-response',
+      '.model-response-text',
+      'response-container',
+      '.presented-response-container',
+      '[data-message-author-role="assistant"]',
+      '[data-message-author-role="model"]',
+      'article[data-author="assistant"]',
+      '[aria-label="Gemini response"]',
+    ],
+    content: ['.model-response-text', '.query-text', '.markdown', 'message-content'],
+    titleStrip: /[\s-]*Gemini$/i,
+  },
+
+  // DeepSeek mirrors ChatGPT but with obfuscated hashed class names. It exposes
+  // `data-message-author-role` / `data-role` attributes and renders assistant
+  // content as `.ds-markdown` (or `.markdown-body`). User messages use
+  // `.user-message` / `[class*="UserMessage"]`.
+  deepseek: {
+    user: [
+      '[data-message-author-role="user"]',
+      '.user-message',
+      '[data-role="user"]',
+      '[class*="UserMessage"]',
+      '[data-testid="user-message"]',
+    ],
+    assistant: [
+      '[data-message-author-role="assistant"]',
+      '.ds-markdown',
+      '.ds-message',
+      '.ds-chat-message',
+      '[data-role="assistant"]',
+      '[class*="AssistantMessage"]',
+      '[class*="markdown-body"]',
+    ],
+    content: ['.ds-markdown', '.markdown-body', '.markdown', '.message-content'],
+    titleStrip: /[\s-]*DeepSeek.*$/i,
+  },
 };
 
 const PLATFORM_DOMAINS = {
   chatgpt: ['chatgpt.com', 'chat.openai.com', 'openai.com'],
   claude: ['claude.ai'],
   kimi: ['kimi.com', 'kimi.moonshot.cn', 'moonshot.cn'],
+  gemini: ['gemini.google.com', 'aistudio.google.com'],
+  deepseek: ['chat.deepseek.com', 'deepseek.com'],
 };
 
 function detectPlatform(hostname) {

@@ -55,6 +55,8 @@
   --chatgpt: #00ff94;
   --claude: #b072ff;
   --kimi: #fec931;
+  --gemini: #8e75ff;
+  --deepseek: #4d6bfe;
   --unknown: #c7c5d3;
   --radius-sm: 4px;
   --radius-lg: 8px;
@@ -438,6 +440,11 @@ main {
 .recent-item .avatar .material-symbols-outlined {
   font-size: 16px;
 }
+.recent-item .avatar.has-logo svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
 .recent-item .meta {
   flex: 1;
   min-width: 0;
@@ -525,6 +532,12 @@ main {
 .history-item.kimi:hover {
   box-shadow: -2px 0 0 0 var(--kimi);
 }
+.history-item.gemini:hover {
+  box-shadow: -2px 0 0 0 var(--gemini);
+}
+.history-item.deepseek:hover {
+  box-shadow: -2px 0 0 0 var(--deepseek);
+}
 .history-item .info {
   flex: 1;
   min-width: 0;
@@ -545,6 +558,20 @@ main {
   border-radius: 50%;
   background: var(--unknown);
 }
+.history-item .info .row-logo {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.history-item .info .row-logo svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
 .history-item .info .dot.chatgpt {
   background: var(--chatgpt);
 }
@@ -553,6 +580,12 @@ main {
 }
 .history-item .info .dot.kimi {
   background: var(--kimi);
+}
+.history-item .info .dot.gemini {
+  background: var(--gemini);
+}
+.history-item .info .dot.deepseek {
+  background: var(--deepseek);
 }
 .history-item .info .name {
   font-family: var(--font-sans);
