@@ -1,0 +1,248 @@
+:root {
+  --bg: #1c1e26;
+  --panel: #262a38;
+  --panel-2: #2f3446;
+  --border: #3a4057;
+  --text: #e6e9f2;
+  --muted: #9aa1b5;
+  --accent: #4c58f5;
+  --accent-hover: #5d68ff;
+  --danger: #ff6b6b;
+  --ok: #51cf8a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 430px;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 15px;
+}
+
+#site-label {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+main {
+  padding: 14px 16px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.option:hover {
+  border-color: var(--accent);
+}
+
+.option input {
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+.option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.option-body small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#export-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#export-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+#export-btn:disabled {
+  background: var(--panel-2);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.status {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 16px;
+  word-break: break-word;
+}
+
+.status.error {
+  color: var(--danger);
+}
+
+.status.ok {
+  color: var(--ok);
+}
+
+#history-section {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.history-empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+#history-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.history-badge {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.history-badge.chatgpt { background: rgba(16, 163, 127, 0.2); color: #7ee2b8; }
+.history-badge.claude { background: rgba(217, 119, 6, 0.2); color: #f6c177; }
+.history-badge.kimi { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
+.history-badge.unknown { background: var(--panel); color: var(--muted); }
+
+.history-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.history-meta {
+  flex: none;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.history-actions {
+  flex: none;
+  display: flex;
+  gap: 2px;
+}
+
+.history-btn {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.history-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.history-btn:hover.danger {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--danger);
+}
+
+.history-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}

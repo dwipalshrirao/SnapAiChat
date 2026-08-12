@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="../icons/icon128.png" alt="" class="logo" />
+      <div>
+        <h1>SnapAiChat</h1>
+        <p id="site-label">Checking current page…</p>
+      </div>
+    </header>
+
+    <main>
+      <section id="format-section">
+        <h2>Format</h2>
+        <label class="option">
+          <input type="radio" name="format" value="markdown" checked />
+          <span class="option-body">
+            <strong>Markdown</strong>
+            <small>Readable, version-control friendly</small>
+          </span>
+        </label>
+        <label class="option">
+          <input type="radio" name="format" value="json" />
+          <span class="option-body">
+            <strong>JSON</strong>
+            <small>Structured, machine readable</small>
+          </span>
+        </label>
+      </section>
+
+      <button id="export-btn" disabled>Export conversation</button>
+      <p id="status" class="status"></p>
+
+      <section id="history-section">
+        <h2>History</h2>
+        <p id="history-empty" class="history-empty">
+          No exports yet. Export a conversation above.
+        </p>
+        <ul id="history-list"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>Reads the page content only — no cookies, storage, or network.</p>
+    </footer>
+
+    <script src="../shared/export-core.js"></script>
+    <script src="../shared/archive-store.js"></script>
+    <script src="../shared/clipboard.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

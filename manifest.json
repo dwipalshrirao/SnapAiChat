@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "SnapAiChat",
+  "version": "1.0.0",
+  "description": "Export ChatGPT, Claude and Kimi conversations to Markdown or JSON.",
+  "permissions": ["activeTab", "storage", "unlimitedStorage"],
+  "host_permissions": [
+    "https://*.chatgpt.com/*",
+    "https://*.openai.com/*",
+    "https://*.claude.ai/*",
+    "https://*.kimi.com/*",
+    "https://*.moonshot.cn/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "SnapAiChat",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.chatgpt.com/*",
+        "https://*.openai.com/*",
+        "https://*.claude.ai/*",
+        "https://*.kimi.com/*",
+        "https://*.moonshot.cn/*"
+      ],
+      "js": [
+        "content/selectors.js",
+        "content/dom-to-markdown.js",
+        "shared/export-core.js",
+        "content/adapters.js",
+        "content/content.js",
+        "shared/archive-store.js",
+        "shared/clipboard.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
