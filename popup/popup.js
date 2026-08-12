@@ -7,10 +7,14 @@ const PLATFORM_DOMAINS = {
   kimi: ['kimi.com', 'kimi.moonshot.cn', 'moonshot.cn'],
 };
 
-const state = { tabId: null, platform: null, available: false };
+const state = { tabId: null, platform: null, available: false, format: 'markdown' };
 
 function $(id) {
   return document.getElementById(id);
+}
+
+function icon(name) {
+  return '<span class="material-symbols-outlined" aria-hidden="true">' + name + '</span>';
 }
 
 function detectPlatformFromUrl(url) {
@@ -41,14 +45,16 @@ function sendToTab(tabId, msg) {
   });
 }
 
-function setSiteLabel(text) {
+// Status indicator (pulsing dot + mono label). kind: '' | 'ok' | 'err'.
+function setSiteLabel(text, kind) {
   $('site-label').textContent = text;
+  $('status-dot').className = 'status-dot' + (kind ? ' ' + kind : '');
 }
 
 function setStatus(text, kind) {
   const el = $('status');
   el.textContent = text || '';
-  el.className = 'status' + (kind ? ' ' + kind : '');
+  el.className = 'feedback' + (kind ? ' ' + kind : '');
 }
 
 function setExportEnabled(enabled) {
@@ -66,7 +72,47 @@ function friendlyError(error) {
   return msg;
 }
 
+// ------------------------------------------------------------ navigation ----
+
+function showTab(tab) {
+  const isHistory = tab === 'history';
+  $('view-export').classList.toggle('active', !isHistory);
+  $('view-history').classList.toggle('active', isHistory);
+  $('bar-export').hidden = isHistory;
+  $('bar-history').hidden = !isHistory;
+  document.querySelectorAll('.nav-btn').forEach((b) => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+}
+
 // ------------------------------------------------------------ archive/history
+
+function timeLabel(createdAt) {
+  const d = new Date(createdAt);
+  if (isNaN(d)) return '';
+  const now = new Date();
+  const startOfDay = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const days = Math.floor((startOfDay(now) - startOfDay(d)) / 86400000);
+  if (days === 0) {
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+  if (days === 1) return 'Yesterday';
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function fullStamp(createdAt) {
+  const d = new Date(createdAt);
+  if (isNaN(d)) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return (
+    d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
+    pad(d.getHours()) + ':' + pad(d.getMinutes())
+  );
+}
+
+function countFor(rec) {
+  return rec.messageCount != null ? rec.messageCount : (rec.model && rec.model.messages ? rec.model.messages.length : 0);
+}
 
 const ICON_SVG = {
   download:
@@ -77,53 +123,109 @@ const ICON_SVG = {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
 };
 
-function historyActionButton(kind, label, className, onClick) {
+function svgIcon(name) {
+  return '<span class="svg-icon" aria-hidden="true">' + (ICON_SVG[name] || '') + '</span>';
+}
+
+function historyActionButton(name, label, className, onClick) {
   const b = document.createElement('button');
-  b.className = 'history-btn' + (className ? ' ' + className : '');
+  b.className = 'action-icon' + (className ? ' ' + className : '');
   b.type = 'button';
   b.title = label;
   b.setAttribute('aria-label', label);
-  b.innerHTML = ICON_SVG[kind] || '';
-  b.addEventListener('click', onClick);
+  b.innerHTML = svgIcon(name);
+  b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    onClick();
+  });
   return b;
 }
 
 function buildHistoryRow(rec) {
   const li = document.createElement('li');
-  li.className = 'history-item';
+  li.className = 'history-item ' + (rec.platform || 'unknown');
 
-  const badge = document.createElement('span');
-  badge.className = 'history-badge ' + (rec.platform || 'unknown');
-  badge.textContent = rec.platform || '?';
+  const info = document.createElement('div');
+  info.className = 'info';
 
-  const title = document.createElement('div');
-  title.className = 'history-title';
-  title.textContent = rec.title;
-  title.title = rec.title;
+  const t = document.createElement('div');
+  t.className = 't';
+  const dot = document.createElement('span');
+  dot.className = 'dot ' + (rec.platform || 'unknown');
+  const name = document.createElement('span');
+  name.className = 'name';
+  name.textContent = rec.title;
+  name.title = rec.title;
+  t.appendChild(dot);
+  t.appendChild(name);
 
-  const meta = document.createElement('div');
-  meta.className = 'history-meta';
-  let metaText = rec.messageCount != null ? rec.messageCount + ' msgs' : '';
-  if (rec.createdAt) {
-    const d = new Date(rec.createdAt);
-    if (!isNaN(d)) {
-      const stamp = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      metaText += (metaText ? '\n' : '') + stamp;
-    }
-  }
-  meta.textContent = metaText;
+  const s = document.createElement('div');
+  s.className = 's';
+  const msgs = document.createElement('span');
+  msgs.textContent = countFor(rec) + ' msgs';
+  const sep = document.createElement('span');
+  sep.className = 'sep';
+  sep.textContent = '·';
+  const stamp = document.createElement('span');
+  stamp.textContent = fullStamp(rec.createdAt);
+  s.appendChild(msgs);
+  s.appendChild(sep);
+  s.appendChild(stamp);
+
+  info.appendChild(t);
+  info.appendChild(s);
 
   const actions = document.createElement('div');
   actions.className = 'history-actions';
-  actions.appendChild(historyActionButton('download', 'Download Markdown', '', () => downloadArchive(rec)));
   actions.appendChild(historyActionButton('copy', 'Copy Markdown', '', () => copyArchive(rec)));
-  actions.appendChild(historyActionButton('delete', 'Delete from history', 'danger', () => deleteArchive(rec)));
+  actions.appendChild(historyActionButton('download', 'Download Markdown', '', () => downloadArchive(rec)));
+  actions.appendChild(historyActionButton('delete', 'Delete from history', 'trash', () => deleteArchive(rec)));
 
-  li.appendChild(badge);
-  li.appendChild(title);
+  li.appendChild(info);
+  li.appendChild(actions);
+  return li;
+}
+
+function buildRecentRow(rec) {
+  const li = document.createElement('li');
+  li.className = 'recent-item';
+  li.title = rec.title;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.style.background = 'color-mix(in srgb, var(--' + (rec.platform || 'unknown') + ') 10%, transparent)';
+  avatar.style.border = '1px solid color-mix(in srgb, var(--' + (rec.platform || 'unknown') + ') 20%, transparent)';
+  avatar.style.color = 'var(--' + (rec.platform || 'unknown') + ')';
+  const avIcon = { chatgpt: 'smart_toy', claude: 'psychology', kimi: 'auto_awesome' }[rec.platform] || 'description';
+  avatar.innerHTML = icon(avIcon);
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  const t = document.createElement('div');
+  t.className = 't';
+  t.textContent = rec.title;
+  const s = document.createElement('div');
+  s.className = 's';
+  s.textContent = timeLabel(rec.createdAt) + ' · ' + countFor(rec) + ' turns';
+  meta.appendChild(t);
+  meta.appendChild(s);
+
+  const actions = document.createElement('div');
+  actions.className = 'recent-actions';
+  actions.appendChild(historyActionButton('copy', 'Copy Markdown', '', () => copyArchive(rec)));
+  actions.appendChild(historyActionButton('download', 'Download Markdown', '', () => downloadArchive(rec)));
+  actions.appendChild(historyActionButton('delete', 'Delete from history', 'trash', () => deleteArchive(rec)));
+
+  li.appendChild(avatar);
   li.appendChild(meta);
   li.appendChild(actions);
   return li;
+}
+
+function renderRecent(list) {
+  const el = $('recent-list');
+  el.textContent = '';
+  for (const rec of list.slice(0, 2)) el.appendChild(buildRecentRow(rec));
 }
 
 async function renderHistory() {
@@ -134,13 +236,14 @@ async function renderHistory() {
     archives = await listArchives();
   } catch (e) {
     listEl.textContent = '';
-    if (emptyEl) emptyEl.style.display = '';
+    if (emptyEl) emptyEl.hidden = false;
     setStatus('History unavailable: ' + e.message, 'error');
     return;
   }
   listEl.textContent = '';
-  if (emptyEl) emptyEl.style.display = archives.length ? 'none' : '';
+  if (emptyEl) emptyEl.hidden = archives.length > 0;
   for (const rec of archives) listEl.appendChild(buildHistoryRow(rec));
+  renderRecent(archives);
 }
 
 async function downloadArchive(rec) {
@@ -172,12 +275,21 @@ async function deleteArchive(rec) {
   }
 }
 
+// ------------------------------------------------------------------- format
+
+function applyFormat(format) {
+  state.format = format;
+  document.querySelectorAll('.format-btn').forEach((b) => {
+    b.classList.toggle('active', b.dataset.format === format);
+  });
+}
+
 async function init() {
   renderHistory();
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab || !tab.url) {
-    setSiteLabel('No active tab.');
+    setSiteLabel('No active tab.', 'err');
     setStatus('Open a ChatGPT, Claude, or Kimi conversation to export it.', 'error');
     return;
   }
@@ -188,17 +300,17 @@ async function init() {
   // Restore the last chosen format.
   const stored = await chrome.storage.local.get('format');
   const wanted = stored.format === 'both' ? 'markdown' : stored.format;
-  const radio = document.querySelector(`input[name="format"][value="${wanted}"]`);
-  if (radio) radio.checked = true;
+  applyFormat(wanted === 'json' ? 'json' : 'markdown');
 
-  document.querySelectorAll('input[name="format"]').forEach((input) => {
-    input.addEventListener('change', () => {
-      chrome.storage.local.set({ format: input.value });
+  document.querySelectorAll('.format-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyFormat(btn.dataset.format);
+      chrome.storage.local.set({ format: btn.dataset.format });
     });
   });
 
   if (!state.platform) {
-    setSiteLabel('Not a supported site');
+    setSiteLabel('Not a supported site', 'err');
     setStatus('Open a ChatGPT, Claude, or Kimi conversation to export it.', 'error');
     setExportEnabled(false);
     return;
@@ -211,18 +323,19 @@ async function init() {
     // Content script answered the availability probe.
     state.available = !!resp.available;
     if (resp.available) {
-      setSiteLabel(PLATFORM_LABELS[state.platform] + ' — conversation ready');
+      setSiteLabel(PLATFORM_LABELS[state.platform] + ' — conversation ready', 'ok');
       setStatus('');
       setExportEnabled(true);
     } else {
-      setSiteLabel(PLATFORM_LABELS[state.platform] + ' detected');
-      setStatus('No conversation on this page. Open a chat first.', 'error');
+      setSiteLabel('No active chat detected', 'err');
+      setStatus('Open a chat first, then retry.', 'error');
       setExportEnabled(false);
     }
   } else {
     const msg = friendlyError(
       resp && resp.error ? resp.error : 'Content script not ready. Reload the chat page.'
     );
+    setSiteLabel('No active chat detected', 'err');
     setStatus(msg, 'error');
     setExportEnabled(false);
   }
@@ -250,7 +363,6 @@ function dateStamp() {
 }
 
 async function doExport() {
-  const format = document.querySelector('input[name="format"]:checked').value;
   setExportEnabled(false);
   setStatus('Exporting…');
 
@@ -262,12 +374,11 @@ async function doExport() {
   }
 
   const model = resp.model;
-  const base =
-    sanitizeFilename(model.platform + '-' + model.title + '-' + dateStamp());
+  const base = sanitizeFilename(model.platform + '-' + model.title + '-' + dateStamp());
 
-  const name = base + (format === 'json' ? '.json' : '.md');
-  const content = format === 'json' ? buildJson(model) : buildMarkdown(model);
-  const mime = format === 'json' ? 'application/json' : 'text/markdown';
+  const name = base + (state.format === 'json' ? '.json' : '.md');
+  const content = state.format === 'json' ? buildJson(model) : buildMarkdown(model);
+  const mime = state.format === 'json' ? 'application/json' : 'text/markdown';
   downloadFile(name, content, mime);
 
   try {
@@ -285,5 +396,10 @@ async function doExport() {
 
 document.addEventListener('DOMContentLoaded', () => {
   $('export-btn').addEventListener('click', doExport);
+  $('view-all').addEventListener('click', () => showTab('history'));
+  $('history-back').addEventListener('click', () => showTab('export'));
+  document.querySelectorAll('.nav-btn').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
   init();
 });

@@ -1,53 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="popup.css" />
+    <title>SnapAiChat</title>
   </head>
   <body>
-    <header>
-      <img src="../icons/icon128.png" alt="" class="logo" />
-      <div>
-        <h1>SnapAiChat</h1>
-        <p id="site-label">Checking current page…</p>
+    <!-- Export view app bar -->
+    <header class="app-bar brand" id="bar-export">
+      <div class="brand-left">
+        <img class="brand-logo" src="../assets/logo.png" alt="SnapAiChat" />
+        <h1 class="app-title">SnapAiChat</h1>
       </div>
+      <button class="icon-btn" type="button" aria-label="Settings" title="Settings" data-inert>
+        <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+      </button>
+    </header>
+
+    <!-- History view app bar -->
+    <header class="app-bar" id="bar-history" hidden>
+      <div class="brand-left">
+        <button class="icon-btn" type="button" aria-label="Back" title="Back" id="history-back">
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+        </button>
+        <h1 class="bar-title">Export History</h1>
+      </div>
+      <button class="icon-btn" type="button" aria-label="Menu" title="Menu" data-inert>
+        <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
+      </button>
     </header>
 
     <main>
-      <section id="format-section">
-        <h2>Format</h2>
-        <label class="option">
-          <input type="radio" name="format" value="markdown" checked />
-          <span class="option-body">
-            <strong>Markdown</strong>
-            <small>Readable, version-control friendly</small>
-          </span>
-        </label>
-        <label class="option">
-          <input type="radio" name="format" value="json" />
-          <span class="option-body">
-            <strong>JSON</strong>
-            <small>Structured, machine readable</small>
-          </span>
-        </label>
+      <!-- ======================= Export view ======================= -->
+      <section class="view active" id="view-export">
+        <div class="scroll">
+          <div class="status-indicator">
+            <span class="status-dot" id="status-dot"></span>
+            <span class="status-label" id="site-label">Checking current page…</span>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Export Format</h2>
+            <div class="format-grid">
+              <button type="button" class="format-btn active" data-format="markdown">MARKDOWN</button>
+              <button type="button" class="format-btn" data-format="json">JSON</button>
+            </div>
+          </div>
+
+          <button type="button" class="export-btn" id="export-btn" disabled>
+            <span class="material-symbols-outlined" aria-hidden="true">download</span>
+            Export conversation
+          </button>
+          <p id="status" class="feedback" role="status"></p>
+
+          <section id="recent-section">
+            <div class="section-head">
+              <h2>Recent</h2>
+              <button type="button" class="view-all" id="view-all">
+                VIEW ALL
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </button>
+            </div>
+            <ul class="recent-list" id="recent-list"></ul>
+          </section>
+
+          <div class="flex-1"></div>
+        </div>
+        <footer class="app-footer">
+          <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+          Local processing only. No data collected.
+        </footer>
       </section>
 
-      <button id="export-btn" disabled>Export conversation</button>
-      <p id="status" class="status"></p>
-
-      <section id="history-section">
-        <h2>History</h2>
-        <p id="history-empty" class="history-empty">
-          No exports yet. Export a conversation above.
-        </p>
-        <ul id="history-list"></ul>
+      <!-- ======================= History view ======================= -->
+      <section class="view" id="view-history">
+        <div class="scroll">
+          <ul class="history-list" id="history-list"></ul>
+          <div class="empty-state" id="history-empty" hidden>
+            <span class="material-symbols-outlined" aria-hidden="true">history</span>
+            <p>&gt; No history found</p>
+          </div>
+          <div class="end-log">-- END OF LOG --</div>
+        </div>
       </section>
     </main>
 
-    <footer>
-      <p>Reads the page content only — no cookies, storage, or network.</p>
-    </footer>
+    <!-- Bottom navigation -->
+    <nav class="bottom-nav">
+      <button type="button" class="nav-btn active" data-tab="export">
+        <span class="material-symbols-outlined" aria-hidden="true">file_export</span>
+        Export
+      </button>
+      <button type="button" class="nav-btn" data-tab="history">
+        <span class="material-symbols-outlined" aria-hidden="true">history</span>
+        History
+      </button>
+    </nav>
 
     <script src="../shared/export-core.js"></script>
     <script src="../shared/archive-store.js"></script>
