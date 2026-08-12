@@ -1,6 +1,7 @@
 # SnapAiChat
 
-A Chrome/Edge browser extension that lets you export your AI conversations from **ChatGPT**, **Claude**, **Kimi**, **Gemini**, and **DeepSeek** into clean **Markdown** or **JSON** — with a local history of everything you've saved. When a chat hits its limit, or you want to carry context into a new conversation, a different model, or even a different platform, just export, grab the text, and paste it into the next chat.
+A Chrome/Edge browser extension that lets you export your AI conversations from **ChatGPT**, **Claude**, **Kimi**, **Gemini**, and **DeepSeek** into clean **Markdown** or **JSON** — with a local history of everything you've saved. 
+When a chat hits its limit, or you want to carry context into a new conversation, a different model, or even a different platform, just export, grab the text, and paste it into the next chat.
 
 Everything runs locally in your browser. No servers, no telemetry, no data collection.
 
@@ -29,7 +30,6 @@ The workflow is three steps: **Export** the chat → **Copy** the Markdown (or *
 
 ## Screenshots
 
-> Drop your images into [`assets/screenshots/`](./assets/screenshots) using the exact filenames below.
 
 | Export view | History view |
 | ----------- | ------------ |
