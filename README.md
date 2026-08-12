@@ -123,6 +123,10 @@ chrome-extension/
 - **Developed with [DeepSeek-v4-flash](https://www.deepseek.com) via the OpenCode CLI** — the extension logic and build were created using the OpenCode command-line assistant.
 - **UI designed with Google Stitch** — the popup layout, dark theme, and visual system were prototyped in Google Stitch.
 
+## Author
+
+Built by **Dwipal Shrirao**. Connect on [LinkedIn](https://www.linkedin.com/in/dwipal-shrirao).
+
 ## License
 
 SnapAiChat is licensed under the **Apache License, Version 2.0** — see [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE).
